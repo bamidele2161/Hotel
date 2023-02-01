@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 
+//getting the schema constructor
+var Schema = mongoose.Schema;
+
 let schema = new mongoose.Schema({
-  hotelId: String,
   hotelName: {
     type: String,
     required: true,
@@ -27,6 +29,10 @@ let schema = new mongoose.Schema({
     parkingSpace: {
       type: Boolean,
     },
+  },
+  room: {
+    type: Schema.Types.ObjectId,
+    ref: "RoomDB",
   },
 });
 

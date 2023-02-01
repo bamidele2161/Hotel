@@ -1,26 +1,30 @@
 const RoomDB = require("../../model/room/roomModel");
+const HotelDB = require("../../model/hotel/hotelModel");
 
 exports.createRoom = async (req, res) => {
   if (!req.body) return res.status(400).send({ message: "No Content" });
 
   try {
-    let hotel = new RoomDB({
+    console.log("hotelId", req.params.hotelId);
+    let room = new RoomDB({
       roomDescription: req.body.roomDescription,
       roomType: req.body.roomType,
       roomPrice: req.body.roomPrice,
-      // hotelFacilities: {
-      //   swimmingPool: req.body.hotelFacilities.swimmingPool,
-      //   restaurant: req.body.hotelFacilities.restaurant,
-      //   bar: req.body.hotelFacilities.bar,
-      //   parkingSpace: req.body.hotelFacilities.parkingSpace,
-      // },
     });
 
-    let check = await room.save();
-    if (check) {
-      return res
-        .status(200)
-        .send({ data: room, message: "room added successfully" });
+    let create = await room.save();
+    if (create) {
+      console.log("hotelId", req.params.hotelId);
+      let checkHotel = await HotelDB.findByIdAndUpdate(
+        { _id: req.params.hotelId },
+        { room: room._id },
+        { new: true }
+      );
+      if (!checkHotel)
+        return res.status(404).send({ message: "Hotel not found" });
+
+      console.log("Hotel", checkHotel);
+      return res.status(200).send({ message: "room added successfully" });
     } else {
       return res.status(404).send({
         message: error.message || "error occurred while adding a room",

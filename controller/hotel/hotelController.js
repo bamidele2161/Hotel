@@ -42,7 +42,7 @@ exports.getAllHotel = async (req, res) => {
 
 exports.getHotel = async (req, res) => {
   let id = req.params.id;
-  let checkForHotel = await HotelDB.findById(id);
+  let checkForHotel = await HotelDB.findById(id).populate("room");
   if (!checkForHotel)
     return res.status(404).send({ message: "Hotel not found" });
   return res.status(200).send({ data: checkForHotel });

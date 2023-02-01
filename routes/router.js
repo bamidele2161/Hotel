@@ -17,7 +17,7 @@ route.put("/updateHotel/:id", hotelController.updateHotel);
 route.delete("/deleteHotel/:id", hotelController.deleteHotel);
 
 //Room
-route.post("/createRoom", roomController.createRoom);
+route.post("/createRoom/:hotelId", roomController.createRoom);
 route.get("/getAllRoom", roomController.getAllRoom);
 route.get("/viewRoom/:id", roomController.getRoom);
 route.put("/updateRoom/:id", roomController.updateRoom);
