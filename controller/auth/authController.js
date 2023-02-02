@@ -1,5 +1,6 @@
 const UserDB = require("../../model/auth/userModel");
 const bcrypt = require("bcrypt");
+let lodash = require("lodash");
 
 exports.signUp = async (req, res) => {
   if (!req.body) return res.status(400).send({ message: "No Content" });
@@ -16,6 +17,7 @@ exports.signUp = async (req, res) => {
   user.password = await bcrypt.hash(user.password, round);
 
   UserDB.findOne({ email: req.body.email })
+    .select("-password")
     .then((email) => {
       if (email) {
         res.status(404).send({ message: "Email already exists" });
@@ -45,9 +47,35 @@ exports.signIn = async (req, res) => {
     res.status(400).send({ message: "Content cannot be empty" });
     return;
   }
-  if (req.body.password.length < 4) {
+  if (req.body.password < 4) {
     res.status(400).send({ message: "Password too short" });
   }
+  let checkEmail = await UserDB.findOne({ email: req.body.email });
+
+  console.log(checkEmail);
+  if (!checkEmail)
+    return res.status(401).send({ message: "Invalid email or password" });
+
+  let checkPassword = await bcrypt.compare(
+    req.body.password,
+    checkEmail.password
+  );
+
+  if (!checkPassword)
+    return res.status(400).send({ message: "Invalid Email or Password" });
+
+  const token = checkEmail.generateAuthToken();
+  res.status(200).send({
+    token: token,
+    data: lodash.pick(checkEmail, [
+      "_id",
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+    ]),
+    message: "Login successfully",
+  });
 };
 
 exports.getUserProfile = async (req, res) => {
