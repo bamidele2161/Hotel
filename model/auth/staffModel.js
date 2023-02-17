@@ -1,3 +1,4 @@
+let jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 let schema = new mongoose.Schema({

@@ -1,5 +1,6 @@
 const StaffDB = require("../../model/auth/staffModel");
 const bcrypt = require("bcrypt");
+let lodash = require("lodash");
 
 exports.registerStaff = async (req, res) => {
   let staff = new StaffDB({
