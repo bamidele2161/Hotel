@@ -5,6 +5,7 @@ const staffController = require("../controller/auth/staffController");
 const hotelController = require("../controller/hotel/hotelController");
 const roomController = require("../controller/room/roomController");
 const validateToken = require("../middleware/authMiddleware");
+const validateWithStaffToken = require("../middleware/staffAuthMiddleware");
 //User
 route.post("/register", authController.signUp);
 route.post("/getProfile", authController.getUserProfile);
@@ -16,7 +17,7 @@ route.post("/registerStaff", staffController.registerStaff);
 route.post("/loginStaff", staffController.staffSignIn);
 
 //Hotel
-route.post("/createHotel", validateToken, hotelController.createHotel);
+route.post("/createHotel", validateWithStaffToken, hotelController.createHotel);
 route.get("/getAllHotel", hotelController.getAllHotel);
 route.get("/viewHotel/:id", hotelController.getHotel);
 route.put("/updateHotel/:id", validateToken, hotelController.updateHotel);

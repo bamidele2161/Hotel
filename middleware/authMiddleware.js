@@ -1,7 +1,8 @@
 let jwt = require("jsonwebtoken");
 
 function validateToken(req, res, next) {
-  var token = req.headers["x-access-token"];
+  console.log("everything from headers", req.headers);
+  var token = req.headers["access-token"];
   if (!token) {
     return res.status(403).send({ auth: false, message: "No token provided." });
   }
