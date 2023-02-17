@@ -1,6 +1,7 @@
 const express = require("express");
 const route = express();
 const authController = require("../controller/auth/authController");
+const staffController = require("../controller/auth/staffController");
 const hotelController = require("../controller/hotel/hotelController");
 const roomController = require("../controller/room/roomController");
 const validateToken = require("../middleware/authMiddleware");
@@ -9,6 +10,10 @@ route.post("/register", authController.signUp);
 route.post("/getProfile", authController.getUserProfile);
 route.post("/login", authController.signIn);
 route.get("/resetPassword", authController.resetPassword);
+
+//staff
+route.post("/registerStaff", staffController.registerStaff);
+route.post("/loginStaff", staffController.staffSignIn);
 
 //Hotel
 route.post("/createHotel", validateToken, hotelController.createHotel);
