@@ -5,7 +5,9 @@ const staffController = require("../controller/auth/staffController");
 const hotelController = require("../controller/hotel/hotelController");
 const roomController = require("../controller/room/roomController");
 const validateToken = require("../middleware/authMiddleware");
-const validateWithStaffToken = require("../middleware/staffAuthMiddleware");
+
+let staffMiddleAuth = validateToken("staff");
+let userMiddleAuth = validateToken("user");
 //User
 route.post("/register", authController.signUp);
 route.post("/getProfile", authController.getUserProfile);
@@ -17,17 +19,17 @@ route.post("/registerStaff", staffController.registerStaff);
 route.post("/loginStaff", staffController.staffSignIn);
 
 //Hotel
-route.post("/createHotel", validateWithStaffToken, hotelController.createHotel);
-route.get("/getAllHotel", hotelController.getAllHotel);
+route.post("/createHotel", staffMiddleAuth, hotelController.createHotel);
+route.get("/getAllHotel", userMiddleAuth, hotelController.getAllHotel);
 route.get("/viewHotel/:id", hotelController.getHotel);
-route.put("/updateHotel/:id", validateToken, hotelController.updateHotel);
-route.delete("/deleteHotel/:id", validateToken, hotelController.deleteHotel);
+route.put("/updateHotel/:id", staffMiddleAuth, hotelController.updateHotel);
+route.delete("/deleteHotel/:id", staffMiddleAuth, hotelController.deleteHotel);
 
 //Room
-route.post("/createRoom/:hotelId", validateToken, roomController.createRoom);
+route.post("/createRoom/:hotelId", staffMiddleAuth, roomController.createRoom);
 route.get("/getAllRoom", roomController.getAllRoom);
 route.get("/viewRoom/:id", roomController.getRoom);
-route.put("/updateRoom/:id", validateToken, roomController.updateRoom);
-route.delete("/deleteRoom/:id", validateToken, roomController.deleteRoom);
+route.put("/updateRoom/:id", staffMiddleAuth, roomController.updateRoom);
+route.delete("/deleteRoom/:id", staffMiddleAuth, roomController.deleteRoom);
 
 module.exports = route;

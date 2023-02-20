@@ -1,21 +1,34 @@
 let jwt = require("jsonwebtoken");
 
-function validateToken(req, res, next) {
-  console.log("everything from headers", req.headers);
-  var token = req.headers["access-token"];
-  if (!token) {
-    return res.status(403).send({ auth: false, message: "No token provided." });
-  }
-  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
-    if (err) {
+const validateToken = (type) => {
+  return (req, res, next) => {
+    let token = req.headers["access-token"];
+
+    if (!token) {
       return res
-        .status(500)
-        .send({ auth: false, message: "Failed to authenticate token." });
+        .status(403)
+        .send(`A ${type} token is required for authentication`);
     }
 
-    req.user = decoded.id;
-    next();
-  });
-}
+    if (type === "user") {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded.id;
+      } catch (err) {
+        return res.status(401).send(err.message || "Invalid token");
+      }
+    }
+    if (type === "staff") {
+      try {
+        const decoded = jwt.verify(token, process.env.STAFF_JWT_SECRET);
+        req.staff = decoded.id;
+      } catch (err) {
+        return res.status(401).send(err.message || "Invalid token");
+      }
+    }
+
+    return next();
+  };
+};
 
 module.exports = validateToken;
