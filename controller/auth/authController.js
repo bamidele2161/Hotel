@@ -27,8 +27,8 @@ exports.signUp = async (req, res) => {
           .save(user)
           .then((data) => {
             sendEmail(
-              user.firstName,
-              "akinyemibamidele2@gmail.com",
+              { name: user.firstName },
+              user.email,
               "Welcome to Bammy Apartment",
               "../view/registration.ejs"
             );

@@ -1,13 +1,13 @@
 const nodemailer = require("nodemailer");
-const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
 const ejs = require("ejs");
 
-const sendEmail = async (name, email, subject, template) => {
+const sendEmail = async (payload, email, subject, template) => {
   //email = receiver's email address
   //subject = subject of the email
   //payload = payload of the email(the template variables)
+  //name = name of the receiver
   //template = the html template of the email
 
   try {
@@ -22,17 +22,14 @@ const sendEmail = async (name, email, subject, template) => {
 
     const requiredPath = path.join(__dirname, template);
 
-    const data = await ejs.renderFile(requiredPath, {
-      name: name,
-    });
+    const data = await ejs.renderFile(requiredPath, payload);
 
     const mailOptions = () => {
       return {
-        from: "akinyemi@sidebrief.com",
+        from: `${process.env.SENDER_EMAIL}`,
         to: email,
         subject: subject,
         html: data,
-        // text: text,
       };
     };
 
