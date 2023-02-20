@@ -5,14 +5,15 @@ const staffController = require("../controller/auth/staffController");
 const hotelController = require("../controller/hotel/hotelController");
 const roomController = require("../controller/room/roomController");
 const validateToken = require("../middleware/authMiddleware");
-
+const localVariables = require("../middleware/localVariables");
 let staffMiddleAuth = validateToken("staff");
 let userMiddleAuth = validateToken("user");
 //User
 route.post("/register", authController.signUp);
 route.post("/getProfile", authController.getUserProfile);
 route.post("/login", authController.signIn);
-route.get("/resetPassword", authController.resetPassword);
+route.put("/updateUser", staffMiddleAuth, authController.updateUser);
+route.post("/generateOTP", localVariables, authController.generateOtp);
 
 //staff
 route.post("/registerStaff", staffController.registerStaff);

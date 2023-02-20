@@ -2,7 +2,7 @@ const UserDB = require("../../model/auth/userModel");
 const bcrypt = require("bcrypt");
 let lodash = require("lodash");
 const sendEmail = require("../../utils/sendEmail");
-
+const otpGenerator = require("otp-generator");
 exports.signUp = async (req, res) => {
   if (!req.body) return res.status(400).send({ message: "No Content" });
 
@@ -33,9 +33,16 @@ exports.signUp = async (req, res) => {
               "../view/registration.ejs"
             );
 
-            return res
-              .status(200)
-              .send({ data: data, message: "Account created successfully" });
+            return res.status(200).send({
+              data: lodash.pick(data, [
+                "_id",
+                "firstName",
+                "lastName",
+                "email",
+                "phone",
+              ]),
+              message: "Account created successfully",
+            });
           })
           .catch((err) => {
             res.status(500).send({
@@ -105,8 +112,57 @@ exports.getUserProfile = async (req, res) => {
     });
 };
 
+//update user
+exports.updateUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (id) {
+      UserDB.updateOne({ _id: id }, body, (err, data) => {
+        if (err)
+          res.status(404).send({ message: err.message || "Error occured" });
+        return res
+          .status(200)
+          .send({ message: "User record updated successfully" });
+      });
+    } else {
+      return res.status(401).send({ error: "User Not Found...!" });
+    }
+  } catch (err) {
+    return res.status(401).send({ error: err.message || "error occured" });
+  }
+};
+
 //password reset with email
-exports.resetPassword = async (req, res) => {};
+exports.generateOtp = async (req, res) => {
+  try {
+    const email = req.body.email;
+    if (!email)
+      return res.status(401).send({ error: "Content cannot be empty" });
+
+    let checkEmail = await UserDB.findOne({ email: email });
+    console.log("user", checkEmail);
+
+    if (!checkEmail) return res.status(401).send({ error: "User not found" });
+    if (checkEmail) {
+      req.app.locals.OTP = await otpGenerator.generate(6, {
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false,
+      });
+
+      sendEmail(
+        { name: checkEmail.firstName, otp: req.app.locals.OTP },
+        email,
+        "OTP Code",
+        "../view/otp.ejs"
+      );
+
+      res.status(200).send({ message: "OTP code sent successfully." });
+    }
+  } catch (err) {
+    return res.status(500).send({ error: err });
+  }
+};
 
 //validate reset token
 exports.resetPassword = async (req, res) => {};
