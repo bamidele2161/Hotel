@@ -1,6 +1,7 @@
 const UserDB = require("../../model/auth/userModel");
 const bcrypt = require("bcrypt");
 let lodash = require("lodash");
+const sendEmail = require("../../utils/sendEmail");
 
 exports.signUp = async (req, res) => {
   if (!req.body) return res.status(400).send({ message: "No Content" });
@@ -25,6 +26,15 @@ exports.signUp = async (req, res) => {
         user
           .save(user)
           .then((data) => {
+            sendEmail(
+              // "lonzlonto@gmail.com",
+              user.email,
+              "Welcome to Bammy Apartment",
+              `Hi ${user.firstName} , ${user.lastName}, \n Welcome to Bammy Apartment \n Thanks, \n Best regards, \n Team Bammy`
+              // { firstName: user.firstName, lastName: user.lastName },
+              // "../../Template/registration.handlebars"
+            );
+
             return res
               .status(200)
               .send({ data: data, message: "Account created successfully" });
@@ -97,4 +107,11 @@ exports.getUserProfile = async (req, res) => {
     });
 };
 
+//password reset with email
+exports.resetPassword = async (req, res) => {};
+
+//validate reset token
+exports.resetPassword = async (req, res) => {};
+
+// update the password
 exports.resetPassword = async (req, res) => {};
