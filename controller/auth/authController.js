@@ -28,9 +28,9 @@ exports.signUp = async (req, res) => {
           .then((data) => {
             sendEmail(
               // "lonzlonto@gmail.com",
-              user.email,
+             user.email,
               "Welcome to Bammy Apartment",
-              `Hi ${user.firstName} , ${user.lastName}, \n Welcome to Bammy Apartment \n Thanks, \n Best regards, \n Team Bammy`
+              `Hi ${user.firstName} , ${user.lastName}, \n\nWelcome to Bammy Apartment \nThanks, \nBest regards, \n \n Team Bammy.`
               // { firstName: user.firstName, lastName: user.lastName },
               // "../../Template/registration.handlebars"
             );

@@ -8,23 +8,19 @@ const sendEmail = async (email, subject, text, payload, template) => {
   //subject = subject of the email
   //payload = payload of the email(the template variables)
   //template = the html template of the email
+
   try {
     //creaing transporter
     const transporter = nodemailer.createTransport({
-      //   host: "smtp.gmail.com",
-      //   type: "SMTP",
-      //   port: 465,
       service: "gmail",
-      //   secure: true,
       auth: {
-        user: "akinyemi@sidebrief.com",
-        pass: "Dsquare142",
+        user: `${process.env.SENDER_EMAIL}`,
+        pass: `${process.env.SENDER_PASSWORD}`,
       },
     });
 
-    // const source = fs.readFile(path.join(__dirname, template), "utf8");
+    // const source = fs.readFileSync(path.join(__dirname, template), "utf8");
     // const compiledTemplate = handlebars.compile(source); //compiling the email template
-    //mailOptions
 
     const mailOptions = () => {
       return {
@@ -39,15 +35,12 @@ const sendEmail = async (email, subject, text, payload, template) => {
     //send email
     transporter.sendMail(mailOptions(), (error, info) => {
       if (error) {
-        // return error;
-        console.log("email sent ");
+        return error;
       } else {
-        // return res.status(200).json({
-        //   success: true,
-        //   message: info.message || info.response,
-        // });
-
-        console.log("email not sent ");
+        return res.status(200).json({
+          success: true,
+          message: info.message || info.response,
+        });
       }
     });
   } catch (error) {
