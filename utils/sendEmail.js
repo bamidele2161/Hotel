@@ -2,8 +2,9 @@ const nodemailer = require("nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
+const ejs = require("ejs");
 
-const sendEmail = async (email, subject, text, payload, template) => {
+const sendEmail = async (name, email, subject, template) => {
   //email = receiver's email address
   //subject = subject of the email
   //payload = payload of the email(the template variables)
@@ -19,16 +20,19 @@ const sendEmail = async (email, subject, text, payload, template) => {
       },
     });
 
-    // const source = fs.readFileSync(path.join(__dirname, template), "utf8");
-    // const compiledTemplate = handlebars.compile(source); //compiling the email template
+    const requiredPath = path.join(__dirname, template);
+
+    const data = await ejs.renderFile(requiredPath, {
+      name: name,
+    });
 
     const mailOptions = () => {
       return {
         from: "akinyemi@sidebrief.com",
         to: email,
         subject: subject,
-        // html: compiledTemplate(payload),
-        text: text,
+        html: data,
+        // text: text,
       };
     };
 
