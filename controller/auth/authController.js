@@ -185,6 +185,7 @@ exports.verifyOTP = async (req, res) => {
 };
 
 // update the password
+//working on this
 exports.resetPassword = async (req, res) => {
   try {
     if (!req.body)
