@@ -135,15 +135,16 @@ exports.updateUser = async (req, res) => {
 //password reset with email
 exports.generateOtp = async (req, res) => {
   try {
-    const email = req.body.email;
+    const email = req.body.email; //get the email from request body
     if (!email)
-      return res.status(401).send({ error: "Content cannot be empty" });
+      return res.status(401).send({ error: "Content cannot be empty" }); //return error if the body is empty
 
-    let checkEmail = await UserDB.findOne({ email: email });
+    let checkEmail = await UserDB.findOne({ email: email }); // check the data with the email, if the email exists
     console.log("user", checkEmail);
 
-    if (!checkEmail) return res.status(401).send({ error: "User not found" });
+    if (!checkEmail) return res.status(401).send({ error: "User not found" }); //return error if it doesn't exist
     if (checkEmail) {
+      // generate OTP if email exists
       req.app.locals.OTP = await otpGenerator.generate(6, {
         lowerCaseAlphabets: false,
         upperCaseAlphabets: false,
@@ -151,6 +152,7 @@ exports.generateOtp = async (req, res) => {
       });
 
       sendEmail(
+        //send email to client
         { name: checkEmail.firstName, otp: req.app.locals.OTP },
         email,
         "OTP Code",
@@ -165,7 +167,17 @@ exports.generateOtp = async (req, res) => {
 };
 
 //validate reset token
-exports.resetPassword = async (req, res) => {};
+exports.verifyOTP = async (req, res) => {
+  // get the otp code from the rerquest body
+  let code = req.body.code;
+
+  if (parseInt(code) === parseInt(req.app.locals.OTP)) {
+    req.app.locals.OTP = null;
+    req.app.locals.resetSession = true;
+    return res.status(200).send({ message: "verify successfull." });
+  }
+  return res.status(400).send({ error: "Invalid OTP code." });
+};
 
 // update the password
 exports.resetPassword = async (req, res) => {};
