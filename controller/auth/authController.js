@@ -117,7 +117,7 @@ exports.updateUser = async (req, res) => {
   try {
     const id = req.params.id;
     if (id) {
-      UserDB.updateOne({ _id: id }, body, (err, data) => {
+      UserDB.updateOne({ _id: id }, req.body, (err, data) => {
         if (err)
           res.status(404).send({ message: err.message || "Error occured" });
         return res
@@ -168,16 +168,68 @@ exports.generateOtp = async (req, res) => {
 
 //validate reset token
 exports.verifyOTP = async (req, res) => {
-  // get the otp code from the rerquest body
-  let code = req.body.code;
+  try {
+    // get the otp code from the rerquest body
+    let code = req.body.code;
 
-  if (parseInt(code) === parseInt(req.app.locals.OTP)) {
-    req.app.locals.OTP = null;
-    req.app.locals.resetSession = true;
-    return res.status(200).send({ message: "verify successfull." });
+    // check if the code is the same as the local code
+    if (parseInt(code) === parseInt(req.app.locals.OTP)) {
+      req.app.locals.OTP = null;
+      req.app.locals.resetSession = true;
+      return res.status(200).send({ message: "verify successfull." });
+    }
+    return res.status(400).send({ error: "Invalid OTP code." });
+  } catch (err) {
+    return res.status(500).send({ error: err });
   }
-  return res.status(400).send({ error: "Invalid OTP code." });
 };
 
 // update the password
-exports.resetPassword = async (req, res) => {};
+exports.resetPassword = async (req, res) => {
+  try {
+    if (!req.body)
+      return res.status(400).send({ errors: "content cannot be empty" });
+
+    const { email } = req.body;
+    let checkEmail = await UserDB.findOne({ email: email });
+
+    if (!checkEmail)
+      return res.status(400).send({ errorss: "User not found." });
+
+    console.log(checkEmail);
+
+    if (checkEmail) {
+      let password = req.body.password;
+
+      let round = await bcrypt.genSalt(10);
+      hashPassword = await bcrypt.hash(password, round);
+
+      console.log("zama", hashPassword);
+
+      if (req.app.locals.resetSession === true) {
+        await UserDB.updateOne(
+          { email: email },
+          { password: hashPassword },
+          (err, data) => {
+            if (err) {
+              return res
+                .status(400)
+                .send({ errorsss: "Error updating password." });
+            } else {
+              req.app.locals.resetSession = false;
+              return res
+                .status(200)
+                .send({ message: "Password changed successfully!." });
+            }
+          }
+        );
+      } else {
+        return res
+          .status(401)
+          .send({ errorsssss: "Kindly generate OTP code." });
+      }
+    }
+  } catch (err) {
+    return res.status(500).send({ errorsssssssss: err });
+  }
+};

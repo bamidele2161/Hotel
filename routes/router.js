@@ -12,7 +12,7 @@ let userMiddleAuth = validateToken("user");
 route.post("/register", authController.signUp);
 route.post("/getProfile", authController.getUserProfile);
 route.post("/login", authController.signIn);
-route.put("/updateUser", staffMiddleAuth, authController.updateUser);
+route.put("/updateUser", authController.updateUser);
 route.post("/generateOTP", localVariables, authController.generateOtp);
 route.post("/verifyOTP", authController.verifyOTP);
 route.post("/resetPassword", authController.resetPassword);
