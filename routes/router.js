@@ -4,6 +4,7 @@ const authController = require("../controller/auth/authController");
 const staffController = require("../controller/auth/staffController");
 const hotelController = require("../controller/hotel/hotelController");
 const roomController = require("../controller/room/roomController");
+const reservationController = require("../controller/reservation/reservationController");
 const validateToken = require("../middleware/authMiddleware");
 const localVariables = require("../middleware/localVariables");
 let staffMiddleAuth = validateToken("staff");
@@ -35,4 +36,7 @@ route.get("/viewRoom/:id", roomController.getRoom);
 route.put("/updateRoom/:id", staffMiddleAuth, roomController.updateRoom);
 route.delete("/deleteRoom/:id", staffMiddleAuth, roomController.deleteRoom);
 
+//Reservation
+route.post("/reservation", reservationController.reservation);
+route.get("/allReservation", reservationController.getAllReservations);
 module.exports = route;

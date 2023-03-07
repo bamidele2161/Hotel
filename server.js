@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
 connectDB();
-console.log("CHECKING",process.env.SENDGRID_API_KEY);
+
 app.use("/api", router);
 app.use(error);
 app.listen(PORT, () => {

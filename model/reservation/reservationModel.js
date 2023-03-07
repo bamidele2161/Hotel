@@ -14,6 +14,7 @@ let schema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    reservationCode: String,
   },
   {
     timestamps: true,
