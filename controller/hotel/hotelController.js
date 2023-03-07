@@ -23,7 +23,7 @@ exports.createHotel = async (req, res) => {
         .send({ data: hotel, message: "hotel added successfully" });
     } else {
       return res.status(404).send({
-        message: error.message || "error occurred while adding a hotel",
+        message: "error occurred while adding a hotel",
       });
     }
   } catch (error) {

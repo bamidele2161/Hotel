@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+var Schema = mongoose.Schema;
+
 let schema = new mongoose.Schema({
   roomDescription: {
     type: String,
@@ -12,6 +14,10 @@ let schema = new mongoose.Schema({
   roomPrice: {
     type: String,
     required: true,
+  },
+  reservation: {
+    type: Schema.Types.ObjectId,
+    ref: "ReservationDB",
   },
 });
 

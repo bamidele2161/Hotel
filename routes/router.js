@@ -23,7 +23,7 @@ route.post("/loginStaff", staffController.staffSignIn);
 
 //Hotel
 route.post("/createHotel", staffMiddleAuth, hotelController.createHotel);
-route.get("/getAllHotel", userMiddleAuth, hotelController.getAllHotel);
+route.get("/getAllHotel", hotelController.getAllHotel);
 route.get("/viewHotel/:id", hotelController.getHotel);
 route.put("/updateHotel/:id", staffMiddleAuth, hotelController.updateHotel);
 route.delete("/deleteHotel/:id", staffMiddleAuth, hotelController.deleteHotel);
