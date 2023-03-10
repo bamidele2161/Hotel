@@ -39,4 +39,5 @@ route.delete("/deleteRoom/:id", staffMiddleAuth, roomController.deleteRoom);
 //Reservation
 route.post("/reservation", reservationController.reservation);
 route.get("/allReservation", reservationController.getAllReservations);
+route.post("/payment", reservationController.makePayment);
 module.exports = route;
