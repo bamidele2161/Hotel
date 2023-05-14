@@ -15,9 +15,9 @@ let schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  reservation: {
+  hotelID: {
     type: Schema.Types.ObjectId,
-    ref: "ReservationDB",
+    ref: "HotelDB",
   },
 });
 

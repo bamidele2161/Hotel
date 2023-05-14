@@ -30,10 +30,6 @@ let schema = new mongoose.Schema({
       type: Boolean,
     },
   },
-  room: {
-    type: Schema.Types.ObjectId,
-    ref: "RoomDB",
-  },
 });
 
 const HotelDB = mongoose.model("HotelDB", schema);

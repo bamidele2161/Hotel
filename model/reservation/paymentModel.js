@@ -17,6 +17,23 @@ let schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  roomType: {
+    type: String,
+    required: true,
+  },
+  numberOfRooms: {
+    type: Number,
+    required: true,
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
+  },
+  reservationCode: String,
 });
 
 const PaymentModel = mongoose.model("PaymentModel", schema);

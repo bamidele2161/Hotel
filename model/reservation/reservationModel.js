@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
+var Schema = mongoose.Schema;
+
 let schema = new mongoose.Schema(
   {
-    isReservation: {
-      type: Boolean,
+    roomType: {
+      type: String,
       required: true,
     },
     totalPrice: {
@@ -21,6 +23,10 @@ let schema = new mongoose.Schema(
     endDate: {
       type: Date,
       required: true,
+    },
+    roomId: {
+      type: Schema.Types.ObjectId,
+      ref: "RoomDB",
     },
     reservationCode: String,
   },

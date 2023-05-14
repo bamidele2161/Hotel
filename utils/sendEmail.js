@@ -9,15 +9,18 @@ const sendEmail = async (payload, email, subject, template) => {
   //payload = payload of the email(the template variables)
   //name = name of the receiver
   //template = the html template of the email
-
+  console.log("email is ", email);
+  console.log(process.env.SENDER_EMAIL, process.env.SENDER_PASSWORD);
   try {
     //creaing transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      port: process.env.MAIL_PORT, // true for 465, false for other ports
+      host: process.env.MAIL_HOST,
       auth: {
         user: `${process.env.SENDER_EMAIL}`,
         pass: `${process.env.SENDER_PASSWORD}`,
       },
+      secure: true,
     });
 
     const requiredPath = path.join(__dirname, template);
@@ -37,11 +40,13 @@ const sendEmail = async (payload, email, subject, template) => {
     transporter.sendMail(mailOptions(), (error, info) => {
       if (error) {
         return error;
+        console.log(error);
       } else {
-        return res.status(200).json({
-          success: true,
-          message: info.message || info.response,
-        });
+        console.log(info);
+        // return res.status(200).json({
+        //   success: true,
+        //   message: info.message || info.response,
+        // });
       }
     });
   } catch (error) {

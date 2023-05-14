@@ -2,34 +2,31 @@ const RoomDB = require("../../model/room/roomModel");
 const HotelDB = require("../../model/hotel/hotelModel");
 
 exports.createRoom = async (req, res) => {
-  if (!req.body) return res.status(400).send({ message: "No Content" });
-
   try {
+    if (!req.body) return res.status(400).send({ message: "No Content" });
+
+    let checkHotel = await HotelDB.findById({ _id: req.params.hotelId });
+    if (!checkHotel)
+      return res.status(404).send({ message: "Hotel not found" });
+
     console.log("hotelId", req.params.hotelId);
     let room = new RoomDB({
       roomDescription: req.body.roomDescription,
       roomType: req.body.roomType,
       roomPrice: req.body.roomPrice,
+      hotelID: req.params.hotelId,
     });
 
     let create = await room.save();
-    if (create) {
-      console.log("hotelId", req.params.hotelId);
-      let checkHotel = await HotelDB.findByIdAndUpdate(
-        { _id: req.params.hotelId },
-        { room: room._id },
-        { new: true }
-      );
-      if (!checkHotel)
-        return res.status(404).send({ message: "Hotel not found" });
-
-      console.log("Hotel", checkHotel);
-      return res.status(200).send({ message: "room added successfully" });
-    } else {
+    if (!create) {
       return res.status(404).send({
         message: error.message || "error occurred while adding a room",
       });
     }
+
+    return res
+      .status(200)
+      .json({ message: "room added successfully", data: create });
   } catch (error) {
     res.status(500).send({ message: "Some error occurred" });
   }
@@ -37,7 +34,7 @@ exports.createRoom = async (req, res) => {
 
 exports.getAllRoom = async (req, res) => {
   try {
-    let allRooms = await RoomDB.find();
+    let allRooms = await RoomDB.find({}).find({}).populate("hotelID");
     return res.status(200).send({ data: allRooms });
   } catch (err) {
     res.status(500).send({ message: err.message || "errror occurred" });

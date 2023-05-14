@@ -67,7 +67,6 @@ exports.signIn = async (req, res) => {
   }
   let checkEmail = await UserDB.findOne({ email: req.body.email });
 
-  console.log(checkEmail);
   if (!checkEmail)
     return res.status(401).send({ message: "Invalid email or password" });
 
@@ -135,7 +134,7 @@ exports.updateUser = async (req, res) => {
 //password reset with email
 exports.generateOtp = async (req, res) => {
   try {
-    const email = req.body.email; //get the email from request body
+    const { email } = req.body; //get the email from request body
     if (!email)
       return res.status(401).send({ error: "Content cannot be empty" }); //return error if the body is empty
 
@@ -151,13 +150,11 @@ exports.generateOtp = async (req, res) => {
         specialChars: false,
       });
 
-      sendEmail(
-        //send email to client
-        { name: checkEmail.firstName, otp: req.app.locals.OTP },
-        email,
-        "OTP Code",
-        "../view/otp.ejs"
-      );
+      console.log(req.app.locals.OTP);
+      const payload = { name: checkEmail.firstName, otp: req.app.locals.OTP };
+      const subject = "OTP Code";
+      //send email to client
+      sendEmail(payload, email, subject, "../view/otp.ejs");
 
       res.status(200).send({ message: "OTP code sent successfully." });
     }
@@ -208,26 +205,23 @@ exports.resetPassword = async (req, res) => {
       console.log("zama", hashPassword);
 
       if (req.app.locals.resetSession === true) {
-        await UserDB.updateOne(
+        let updateUser = await UserDB.updateOne(
           { email: email },
-          { password: hashPassword },
-          (err, data) => {
-            if (err) {
-              return res
-                .status(400)
-                .send({ errorsss: "Error updating password." });
-            } else {
-              req.app.locals.resetSession = false;
-              return res
-                .status(200)
-                .send({ message: "Password changed successfully!." });
-            }
-          }
+          { password: hashPassword }
         );
+
+        if (!updateUser) {
+          return res.status(400).send({ errorsss: "Error updating password." });
+        }
+
+        req.app.locals.resetSession = false;
+        return res
+          .status(200)
+          .send({ message: "Password changed successfully!." });
       } else {
         return res
-          .status(401)
-          .send({ errorsssss: "Kindly generate OTP code." });
+          .status(400)
+          .json({ errorsssss: "Kindly generate OTP code." });
       }
     }
   } catch (err) {
